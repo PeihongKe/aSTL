@@ -80,7 +80,7 @@ namespace anotherSTL
 		//void clear();
 
 	private:
-		T* _data_;
+		pointer _data_;
 		size_type _size_;
 		size_type _capacity_;
 

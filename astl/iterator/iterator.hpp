@@ -1,7 +1,7 @@
 #ifndef _iterator_
 #define _iterator_
 
-#include "iteratorUtil.hpp"
+#include "iterator_traits.hpp"
 
 namespace anotherSTL
 {

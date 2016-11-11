@@ -3,9 +3,11 @@ iterator.cpp
 iteratorUtil.cpp
 )
 
-add_library(astl_iterator ${iterator_SRCS})
+file(GLOB iterator_HEADERS "*.hpp")
+
+add_library(astl_iterator ${iterator_SRCS} ${iterator_HEADERS})
+
+
 
 install(TARGETS astl_iterator DESTINATION lib)
-
-file(GLOB HEADERS "*.hpp")
 install(FILES ${HEADERS} DESTINATION include/astl/iterator)
