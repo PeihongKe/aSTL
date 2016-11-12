@@ -1,5 +1,5 @@
-#ifndef _iterator_
-#define _iterator_
+#ifndef _ANOTHERSTL_ITERATOR_
+#define _ANOTHERSTL_ITERATOR_
 
 #include "iterator_traits.hpp"
 
@@ -16,9 +16,29 @@ namespace anotherSTL
 		typedef Category	iterator_category;
 	};
 
-	//template<typename InputIterator class Distance>
-	//void advance(InputIterator& it, Distance n);
 
+	template<typename InputIterator, typename Distance >
+	inline void __advance(InputIterator& it, Distance n, input_interator_tag)
+	{
+		while (n-- > 0)
+		{
+			++it;
+		}
+	}
+
+	template<typename InputIterator, typename Distance >
+	inline void __advance(InputIterator& it, Distance n, random_access_iterator_tag)
+	{
+		it += n;
+	}
+
+	template<typename InputIterator, class Distance>
+	inline void advance(InputIterator& it, Distance n)
+	{		
+		__advance(it, n, category(it));
+	}
+
+	// TOCHECK: how about output iterator
 	template<typename InputIterator>
 	inline typename iterator_traits<InputIterator>::difference_type
 		__distance(InputIterator first, InputIterator last, input_interator_tag)
@@ -32,6 +52,7 @@ namespace anotherSTL
 		return n;
 	}
 
+	
 	template<typename RandomAccessIteraotr>
 	inline typename iterator_traits<RandomAccessIteraotr>::difference_type
 		__distance(RandomAccessIteraotr first, RandomAccessIteraotr last, random_access_iterator_tag)
@@ -40,11 +61,10 @@ namespace anotherSTL
 	}
 
 	template<typename InputIterator>
-	typename iterator_traits<InputIterator>::difference_type
+	inline typename iterator_traits<InputIterator>::difference_type
 		distance(InputIterator first, InputIterator last)
 	{
-		typedef typename iterator_traits<InputIterator>::iterator_category category;
-		__distance(first, second, tag());
+		__distance(first, second, category(first));
 	}
 
  

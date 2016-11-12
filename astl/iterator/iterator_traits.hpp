@@ -1,5 +1,5 @@
-#ifndef _ANOTHERSTL_ITERATOR_UTIL
-#define _ANOTHERSTL_ITERATOR_UTIL
+#ifndef _ANOTHERSTL_ITERATOR_TRAITS
+#define _ANOTHERSTL_ITERATOR_TRAITS
 
 #include "astl\base\fundamental.hpp"
 
@@ -52,8 +52,26 @@ namespace anotherSTL
 		return category();
 	}
 	
+
+	// NOTE: how this function is used
+	template<typename Iterator>
+	inline typename iterator_traits<Iterator>::difference_type*
+		distance_type(const Iterator&)
+	{
+		typedef typename iterator_traits<Iterator>::difference_type diff_type;
+		return static_cast<diff_type*>(0);
+	}
+
+	// Note: how this function is used
+	template<typename Iterator>
+	inline typename iterator_traits<Iterator>::value_type*
+		value_type(const Iterator&)
+	{
+		typedef typename iterator_traits<Iterator>::value_type v_type;
+			return static<v_type*>(0);
+	}
 }
 
 
-#endif // !_ANOTHERSTL_ITERATOR_UTIL
+#endif // !_ANOTHERSTL_ITERATOR_TRAITS
 
