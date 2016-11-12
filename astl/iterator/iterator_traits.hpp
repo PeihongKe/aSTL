@@ -11,8 +11,6 @@ namespace anotherSTL
 	struct bidirectional_iterator_tag: public forward_interator_tag	{};
 	struct random_access_iterator_tag: public bidirectional_iterator_tag{};
 
-
-
 	template<typename Iterator>
 	class iterator_traits
 	{
@@ -45,6 +43,14 @@ namespace anotherSTL
 		typedef ptrdiff_t					difference_type;
 		typedef random_access_iterator_tag	iterator_category;
 	};
+
+	template<typename InputIterator>
+	inline typename iterator_traits<InputIterator>::iterator_category
+		category(const InputIterator&)
+	{
+		typedef typename iterator_traits<InputIterator>::iterator_category category;
+		return category();
+	}
 	
 }
 

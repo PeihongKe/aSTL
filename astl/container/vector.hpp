@@ -22,8 +22,8 @@ namespace anotherSTL
 		typedef T									value_type;
 		typedef T&									reference;
 		typedef const T&							const_reference;
-		typedef random_access_iterator<T>			iterator;
-		typedef random_access_iterator<const T>		const_iterator;
+		typedef T*									iterator;
+		typedef const T*							const_iterator;
 		typedef T*									pointer;
 		typedef const T*							const_pointer;
 		typedef unsigned							size_type;
