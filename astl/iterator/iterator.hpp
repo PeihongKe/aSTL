@@ -62,9 +62,9 @@ namespace anotherSTL
 
 	template<typename InputIterator>
 	inline typename iterator_traits<InputIterator>::difference_type
-		distance(InputIterator first, InputIterator last)
+		distance(InputIterator first, InputIterator second)
 	{
-		__distance(first, second, category(first));
+		return __distance(first, second, category(first));
 	}
 
  

@@ -1,18 +1,22 @@
 
-#define BOOST_TEST_MAIN
+
 #define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE MyTest 
 #include <boost/test/unit_test.hpp>
-#include "astl\iterator\iterator.hpp"
-//#include <boost\test\unit_test_log.hpp>
-//#include <boost\test\unit_test_monitor.hpp>
-//#include <boost\test\framework.hpp>
 
 
-BOOST_AUTO_TEST_CASE(test_init)
+
+
+//int main()
+//{
+//	return 0;
+//}
+//
+
+
+BOOST_AUTO_TEST_CASE(my_test)
 {
-	int current_time = 0; // real call is required here
-
-	BOOST_TEST_MESSAGE("Testing initialization :");
-	BOOST_TEST_MESSAGE("Current time:" << current_time);
+	BOOST_CHECK_EQUAL(1+7, 8);
+ 
 }
 
