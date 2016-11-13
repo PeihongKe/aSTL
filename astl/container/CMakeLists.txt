@@ -9,4 +9,4 @@ add_library(astl_container ${container_SRCS} ${container_HEADERS})
 target_link_libraries(astl_container astl_iterator)
 
 install(TARGETS astl_container DESTINATION lib)
-install(FILES ${HEADERS} DESTINATION include/astl/iterator)
+install(FILES ${container_HEADERS} DESTINATION include/astl/iterator)
