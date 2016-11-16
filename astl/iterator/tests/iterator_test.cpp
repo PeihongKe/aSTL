@@ -2,11 +2,34 @@
 #define BOOST_TEST_MODULE iterator_trait
 #include <boost/test/unit_test.hpp>
 #include "astl\iterator\iterator_traits.hpp"
+#include "astl\iterator\iterator.hpp"
 #include <typeinfo>
 #include <iostream>
 #include <string>
 
 using namespace anotherSTL;
+
+
+BOOST_AUTO_TEST_CASE(distance_func)
+{
+	int a[3] = { 1,2,3 };
+	int *begin = a;
+	int *end = a + 3;
+	int dis = distance(begin, end);
+	BOOST_CHECK(dis == 3);
+
+}
+
+BOOST_AUTO_TEST_CASE(advance_func)
+{
+	int a[3] = { 1,2,3 };
+	int *begin = a;
+	int *end = a + 2;
+    advance(begin, 2);
+	BOOST_CHECK(*begin == *end);
+
+}
+
 
 BOOST_AUTO_TEST_CASE(category_function)
 {
