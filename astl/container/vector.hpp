@@ -20,13 +20,14 @@ namespace anotherSTL
 	public:
 		// typedef.
 		typedef T									value_type;
-		typedef T&									reference;
-		typedef const T&							const_reference;
-		typedef T*									iterator;
-		typedef const T*							const_iterator;
-		typedef T*									pointer;
+		typedef value_type&							reference;		
+		typedef value_type*							iterator;
+		typedef value_type*							pointer;
+		typedef size_t								size_type;
+		typedef const value_type					const_reference; // TODO: check if we need this
+		typedef const T*							const_iterator; // TODO: check if we need this
 		typedef const T*							const_pointer;
-		typedef unsigned							size_type;
+		
 
 		// ctor.
 		explicit vector();
