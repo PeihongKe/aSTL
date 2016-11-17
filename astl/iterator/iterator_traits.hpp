@@ -62,13 +62,20 @@ namespace anotherSTL
 		return static_cast<diff_type*>(0);
 	}
 
-	// Note: how this function is used
+	// Note: how this function is used, just as a type marker for different overloaded function
 	template<typename Iterator>
 	inline typename iterator_traits<Iterator>::value_type*
 		value_type(const Iterator&)
 	{
 		typedef typename iterator_traits<Iterator>::value_type v_type;
 			return static<v_type*>(0);
+	}
+
+	template<typename Iterator>
+	inline typename iterator_traits<Iterator>::value_type*
+		get_pointer(Iterator i)
+	{
+		return &(*i);
 	}
 }
 
