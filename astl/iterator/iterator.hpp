@@ -20,11 +20,26 @@ namespace anotherSTL
 	template<typename InputIterator, typename Distance >
 	inline void __advance(InputIterator& it, Distance n, input_interator_tag)
 	{
+		//TODO: how about n is negative, is this possible
 		while (n-- > 0)
 		{
 			++it;
 		}
 	}
+
+	template<typename BiDirectionaryIterator, typename Distance>	
+	inline void __advance(BiDirectionaryIterator& first, Distance n, bidirectional_iterator_tag)
+	{
+		if (n > 0)
+		{
+			while (n-- > 0){++it;}
+		}
+		else
+		{
+			while (n++ < 0){--it;}
+		}
+	}
+
 
 	template<typename InputIterator, typename Distance >
 	inline void __advance(InputIterator& it, Distance n, random_access_iterator_tag)
@@ -52,7 +67,6 @@ namespace anotherSTL
 		return n;
 	}
 
-	
 	template<typename RandomAccessIteraotr>
 	inline typename iterator_traits<RandomAccessIteraotr>::difference_type
 		__distance(RandomAccessIteraotr first, RandomAccessIteraotr last, random_access_iterator_tag)
