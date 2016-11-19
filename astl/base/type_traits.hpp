@@ -1,0 +1,7 @@
+#ifndef _ANOTHERSTL_TYPE_TRAITS_
+#define _ANOTHERSTL_TYPE_TRAITS_
+
+ 
+
+
+#endif
