@@ -8,7 +8,14 @@
 
 namespace anotherSTL
 { 
- 
+	//TODO: specialized it 
+	template<typename InputIterator, typename OutputIterator>
+	OutputIterator copy(InputIterator first1, InputIterator last1, OutputIterator first2)
+	{
+
+	}
+
+
 }
 
 
