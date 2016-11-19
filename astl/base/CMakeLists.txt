@@ -1,6 +1,9 @@
 PROJECT(astl_base C CXX)
-file(GLOB_RECURSE base_HEADERS "*hpp")
+set(base_SRCS type_traits.cpp)
 
+
+file(GLOB_RECURSE base_HEADERS "*hpp")
+add_library(astl_base ${base_SRCS} ${base_HEADERS})
 
 
 
