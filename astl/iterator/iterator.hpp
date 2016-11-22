@@ -20,7 +20,6 @@ namespace anotherSTL
 	template<typename InputIterator, typename Distance >
 	inline void __advance(InputIterator& it, Distance n, input_interator_tag)
 	{
-		//TODO: how about n is negative, is this possible
 		while (n-- > 0)
 		{
 			++it;
@@ -53,7 +52,7 @@ namespace anotherSTL
 		__advance(it, n, category(it));
 	}
 
-	// TOCHECK: how about output iterator
+	// TOCHECK: how about output iterator; not defined for output iterator
 	template<typename InputIterator>
 	inline typename iterator_traits<InputIterator>::difference_type
 		__distance(InputIterator first, InputIterator last, input_interator_tag)

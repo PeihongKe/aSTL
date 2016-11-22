@@ -8,4 +8,4 @@ install(TARGETS astl_algo DESTINATION lib)
 install(FILES ${algo_HEADERS} DESTINATION include)
 
 
- 
+ add_subdirectory(tests)
