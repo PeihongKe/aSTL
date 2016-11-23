@@ -45,3 +45,19 @@ BOOST_AUTO_TEST_CASE(copy_char)
 	BOOST_CHECK(result[2] == 'c');
 	BOOST_CHECK((result_end - result) == size);
 }
+
+BOOST_AUTO_TEST_CASE(copy_struct)
+{	
+	// should call	template<typename InputIterator, typename ForwardIterator> 	inline ForwardIterator _uninitialized_copy_2(InputIterator first1, InputIterator last1, ForwardIterator first2, _false_type)
+	struct Shape { int a; int b; };
+	const int size = 2;
+	Shape sps[2] = { { 1,2 },{ 3,4 } };
+
+	Shape result[size];
+	Shape* result_end = anotherSTL::uninitialized_copy(&sps[0], sps + size, &result[0]);
+	BOOST_CHECK(result[0].a == 1);
+	BOOST_CHECK(result[0].b == 2);
+	BOOST_CHECK(result[1].a == 3);
+	BOOST_CHECK(result[1].b == 4);
+	BOOST_CHECK((result_end - result) == size);
+}

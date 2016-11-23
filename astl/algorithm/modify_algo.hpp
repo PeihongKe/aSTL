@@ -78,7 +78,7 @@ namespace anotherSTL
 	template<typename InputIterator, typename OutputIterator>
 	OutputIterator _copy_by_category(InputIterator first1, InputIterator last1, OutputIterator first2, random_access_iterator_tag)
 	{
-		for (size_t i = 0; i < last1 - first1; ++i, ++first2)
+		for (ptrdiff_t i = 0; i < last1 - first1; ++i, ++first2)
 		{
 			*(first2 ) = *(first1+i);
 		}
