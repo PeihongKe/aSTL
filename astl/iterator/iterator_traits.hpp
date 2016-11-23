@@ -68,7 +68,7 @@ namespace anotherSTL
 		value_type(const Iterator&)
 	{
 		typedef typename iterator_traits<Iterator>::value_type v_type;
-			return static<v_type*>(0);
+			return static_cast<v_type*>(0);
 	}
 
 	template<typename Iterator>
