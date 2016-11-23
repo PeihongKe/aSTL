@@ -5,9 +5,9 @@
 
 namespace anotherSTL
 {
-	struct output_iterator_tag {}; //Write
+	struct output_iterator_tag {}; //Write, cannot get an end iterator 
 	struct input_interator_tag {}; // Read
-	struct forward_interator_tag : public input_interator_tag {}; //Read Write
+	struct forward_interator_tag : public input_interator_tag {}; //Read Write, can get an end iterator
 	struct bidirectional_iterator_tag: public forward_interator_tag	{};
 	struct random_access_iterator_tag: public bidirectional_iterator_tag{};
 

@@ -18,6 +18,7 @@ namespace anotherSTL
 		return first2 + size;
 	}	 
 
+	//TODO: need to guarantee commit-and-roll-back 
 	template<typename InputIterator, typename OutputIterator>
 	inline OutputIterator copy(InputIterator first1, InputIterator last1, OutputIterator first2)
 	{
@@ -95,6 +96,41 @@ namespace anotherSTL
 		return first2;
 	}
 
+	template<typename ForwardIterator, typename T>
+	inline void fill(ForwardIterator first, ForwardIterator last, const T&v)
+	{
+		typedef typename type_traits<ForwardIterator>::iterator_category category;
+		_fill_by_category(first, last, v, category());
+	}
+
+	template<typename ForwardIterator, typename T>
+	inline void _fill_by_category(ForwardIterator first, ForwardIterator last, const T&v, _true_type)
+	{
+		for (ptrdiff_t i = 0; i < last - first; ++i)
+		{
+			*(first + i) = v;
+		}		
+	}
+
+	template<typename ForwardIterator, typename T>
+	inline void _fill_by_category(ForwardIterator first, ForwardIterator last, const T&v, _false_type)
+	{
+		while (first != last)
+		{
+			*first = v;
+			++first;
+		}
+	}
+
+	template<typename OutputIterator, typename Size, typename T>
+	inline OutputIterator fill_n(OutputIterator first, Size n, const T& v)
+	{
+		while (n-- >= 0)
+		{
+			*first++ = v;
+		}
+		return first;
+	}
 
 
 
