@@ -44,8 +44,24 @@ namespace anotherSTL
 		return first2;
 	}
 
+	template<typename ForwardIterator, typename T>
+	inline void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T&v)
+	{
+		typedef typename type_traits<T>::is_POD_type isPOD;
+		uninitialized_fill(first, last, v, isPOD());
+	}
 
+	//template<typename ForwardIterator, typename T>
+	//inline void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T&v, _true_type)
+	//{
 
+	//}
+
+	//template<typename ForwardIterator, typename T>
+	//inline void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T&v, _false_type)
+	//{
+
+	//}
 
 }
 
