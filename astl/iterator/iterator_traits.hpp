@@ -5,6 +5,8 @@
 
 namespace anotherSTL
 {
+	/*Output iterators are iterators that can be used in sequential output operations, where each element pointed by the iterator is written a value only once and then the iterator is incremented.
+	All forward, bidirectional and random - access iterators that are not constant iterators are also valid output iterators.*/
 	struct output_iterator_tag {}; //Write, cannot get an end iterator 
 	struct input_interator_tag {}; // Read
 	struct forward_interator_tag : public input_interator_tag {}; //Read Write, can get an end iterator

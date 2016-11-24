@@ -61,3 +61,24 @@ BOOST_AUTO_TEST_CASE(copy_struct)
 	BOOST_CHECK(result[1].b == 4);
 	BOOST_CHECK((result_end - result) == size);
 }
+
+BOOST_AUTO_TEST_CASE(fill_int)
+{
+	const int size = 3;
+	int output[size];	
+	int value = 1;
+	fill(&output[0], output + size, value);
+	int expected[size] = { value, value, value };
+	BOOST_CHECK_EQUAL_COLLECTIONS(&output[0], output + size, &expected[0], expected + size);
+}
+
+
+BOOST_AUTO_TEST_CASE(fill_n_int)
+{
+	const int size = 3;
+	int output[size];
+	int value = 1;
+	int* outputEnd = fill_n(&output[0], size, value);
+	int expected[size] = { value, value, value };
+	BOOST_CHECK_EQUAL_COLLECTIONS(&output[0], outputEnd, &expected[0], expected + size);
+}

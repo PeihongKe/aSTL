@@ -3,7 +3,6 @@
 
 #include <new>
 #include "astl\iterator\iterator_traits.hpp"
- 
 #include "astl\base\type_traits.hpp"
 #include "astl\allocator\construct.hpp"
 #include <string>
@@ -99,12 +98,12 @@ namespace anotherSTL
 	template<typename ForwardIterator, typename T>
 	inline void fill(ForwardIterator first, ForwardIterator last, const T&v)
 	{
-		typedef typename type_traits<ForwardIterator>::iterator_category category;
+		typedef typename iterator_traits<ForwardIterator>::iterator_category category;
 		_fill_by_category(first, last, v, category());
 	}
 
 	template<typename ForwardIterator, typename T>
-	inline void _fill_by_category(ForwardIterator first, ForwardIterator last, const T&v, _true_type)
+	inline void _fill_by_category(ForwardIterator first, ForwardIterator last, const T&v, random_access_iterator_tag)
 	{
 		for (ptrdiff_t i = 0; i < last - first; ++i)
 		{
@@ -112,8 +111,9 @@ namespace anotherSTL
 		}		
 	}
 
+	// This cannot be output iterator because you would not know last.
 	template<typename ForwardIterator, typename T>
-	inline void _fill_by_category(ForwardIterator first, ForwardIterator last, const T&v, _false_type)
+	inline void _fill_by_category(ForwardIterator first, ForwardIterator last, const T&v, input_interator_tag)
 	{
 		while (first != last)
 		{
@@ -125,7 +125,7 @@ namespace anotherSTL
 	template<typename OutputIterator, typename Size, typename T>
 	inline OutputIterator fill_n(OutputIterator first, Size n, const T& v)
 	{
-		while (n-- >= 0)
+		while (n-- > 0)
 		{
 			*first++ = v;
 		}
