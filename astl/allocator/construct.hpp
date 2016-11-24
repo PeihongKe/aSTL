@@ -3,6 +3,7 @@
 
 #include <new>
 #include "astl\iterator\iterator_traits.hpp"
+#include "astl\base\type_traits.hpp"
 
 
 namespace anotherSTL
@@ -22,15 +23,32 @@ namespace anotherSTL
 
 
 	//TODO: cneed to be specialized for trades with trivial dtor
-	template<typename FwdIterator>
-	inline void destroy(FwdIterator from, FwdIterator to)
+	template<typename ForwardIterator>
+	inline void destroy(ForwardIterator from, ForwardIterator to)
+	{
+		_destroy(from, to, value_type(from));
+	}
+
+	template<typename ForwardIterator, typename T>
+	inline void _destroy(ForwardIterator from, ForwardIterator to, T*)
+	{
+		typedef typename type_traits<T>::has_trivial_dtor has_trivial_dtor;
+		_destroy_by_has_trivial_dtor(from, to, has_trivial_dtor());
+	}
+
+	template<typename ForwardIterator>
+	inline void _destroy_by_has_trivial_dtor(ForwardIterator from, ForwardIterator to, _true_type)	{	}
+
+	template<typename ForwardIterator>
+	inline void _destroy_by_has_trivial_dtor(ForwardIterator from, ForwardIterator to, _false_type) 
 	{
 		while (from != to)
 		{
-			destroy(get_pointer(from));
-			++from;
+			destroy(get_pointer(from++));
 		}
 	}
+
+	
 
 }
 

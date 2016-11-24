@@ -103,7 +103,6 @@ BOOST_AUTO_TEST_CASE(uninitialized_fill_n_struct)
 	Shape output[2];
 	Shape value = { 1,2 };
 	Shape* outputEnd = anotherSTL::uninitialize_fill_n(&output[0], size, value);
-	Shape expected[size] = {value, value};
 	BOOST_CHECK(output[0].a == 1);
 	BOOST_CHECK(output[0].b == 2);
 	BOOST_CHECK(output[1].a == 1);
