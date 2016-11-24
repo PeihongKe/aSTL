@@ -44,24 +44,67 @@ namespace anotherSTL
 		return first2;
 	}
 
-	template<typename ForwardIterator, typename T>
-	inline void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T&v)
+	template<typename ForwardIterator, typename Size, typename T>
+	ForwardIterator uninitialize_fill_n(ForwardIterator first, Size n, const T&v)
 	{
-		typedef typename type_traits<T>::is_POD_type isPOD;
-		uninitialized_fill(first, last, v, isPOD());
+		return _uninitialize_fill_n(first, n, v, value_type(first));
 	}
 
-	//template<typename ForwardIterator, typename T>
-	//inline void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T&v, _true_type)
-	//{
+	template<typename ForwardIterator, typename Size, typename T, typename T1>
+	ForwardIterator _uninitialize_fill_n(ForwardIterator first, Size n, const T&v, T1*)
+	{
+		typedef typename type_traits<T1>::is_POD_type isPOD;
+		return _uninitialize_fill_n_by_category(first, n, v, isPOD());
+	}
 
-	//}
+	template<typename ForwardIterator, typename Size, typename T>
+	ForwardIterator _uninitialize_fill_n_by_category(ForwardIterator first, Size n, const T&v, _true_type)
+	{
+		return fill_n(first, n, v);
+	}
 
-	//template<typename ForwardIterator, typename T>
-	//inline void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T&v, _false_type)
-	//{
+	template<typename ForwardIterator, typename Size, typename T>
+	ForwardIterator _uninitialize_fill_n_by_category(ForwardIterator first, Size n, const T&v, _false_type)
+	{
+		while (n-- > 0)
+		{
+			// use copy ctor to construct for the uninitialize 
+			construct(get_pointer(first++), v);
+		}
+		return first;
+	}
 
-	//}
+	// depending on the value type of forward iterator
+	template<typename ForwardIterator, typename T>
+	inline void uninitialize_fill(ForwardIterator first, ForwardIterator last, const T&v)
+	{		
+		_uninitialized_fill(first, last, v, value_type(first));
+	}
+
+	template<typename ForwardIterator, typename T, typename T1>
+	inline void _uninitialized_fill(ForwardIterator first, ForwardIterator last, const T& v, T1*)
+	{
+		typedef typename type_traits<T1>::is_POD_type isPOD;
+		_uninitialize_fill_by_isPOD(first, last, v, isPOD());
+	}
+
+	// is_POD: cpy ctor = cpy assignment ctor; dtor is trivial
+	template<typename ForwardIterator, typename T>
+	inline void _uninitialize_fill_by_isPOD(ForwardIterator first, ForwardIterator last, const T&v, _true_type)
+	{
+		fill(first, last, v);
+	}
+	
+	template<typename ForwardIterator, typename T>
+	inline void _uninitialize_fill_by_isPOD(ForwardIterator first, ForwardIterator last, const T&v, _false_type)
+	{
+		while (first != last)
+		{
+			construct(get_pointer(first++), v);			
+		}
+	}
+
+
 
 }
 

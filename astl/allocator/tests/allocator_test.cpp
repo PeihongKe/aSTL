@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(uninitialized_copy_int)
 }
 
 
-BOOST_AUTO_TEST_CASE(copy_const_char)
+BOOST_AUTO_TEST_CASE(uninitialized_copy_const_char)
 {
 	// should call "inline char* copy(const char* first1, const char* last1, char* first2)"
 	const int size = 3;
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(copy_const_char)
 	BOOST_CHECK((result_end - result) == size);
 }
 
-BOOST_AUTO_TEST_CASE(copy_char)
+BOOST_AUTO_TEST_CASE(uninitialized_copy_char)
 {
 	// should called "	template<typename T> T* _copy_by_trivial_assign_ctr_4_ptr(T* first1, T* last1, T* first2, _true_type)"
 	const int size = 3;
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(copy_char)
 	BOOST_CHECK((result_end - result) == size);
 }
 
-BOOST_AUTO_TEST_CASE(copy_struct)
+BOOST_AUTO_TEST_CASE(uninitialized_copy_struct)
 {	
 	// should call	template<typename InputIterator, typename ForwardIterator> 	inline ForwardIterator _uninitialized_copy_2(InputIterator first1, InputIterator last1, ForwardIterator first2, _false_type)
 	struct Shape { int a; int b; };
@@ -60,4 +60,53 @@ BOOST_AUTO_TEST_CASE(copy_struct)
 	BOOST_CHECK(result[1].a == 3);
 	BOOST_CHECK(result[1].b == 4);
 	BOOST_CHECK((result_end - result) == size);
+}
+
+BOOST_AUTO_TEST_CASE(uninitialized_fill_int)
+{
+	const int size = 3;
+	int value = 1;
+	int output[size];
+	fill(&output[0], output + size, value);
+	BOOST_CHECK(output[0] == value);
+	BOOST_CHECK(output[1] == value);
+	BOOST_CHECK(output[2] == value);
+}
+
+BOOST_AUTO_TEST_CASE(uninitialized_fill_struct)
+{
+	struct Shape { int a; int b; };
+	const int size = 2;
+	Shape output[2];
+	Shape value = { 1,2 };	
+	anotherSTL::uninitialize_fill(&output[0], output + size, value);
+	BOOST_CHECK(output[0].a == 1);
+	BOOST_CHECK(output[0].b == 2);
+	BOOST_CHECK(output[1].a == 1);
+	BOOST_CHECK(output[1].b == 2);
+}
+
+BOOST_AUTO_TEST_CASE(uninitialized_fill_n_int)
+{
+	const int size = 3;
+	int value = 1;
+	int output[size];
+	int *outputEnd = uninitialize_fill_n(&output[0], size, value);
+	int expected[size] = { value, value, value };
+	BOOST_CHECK_EQUAL_COLLECTIONS(&output[0], outputEnd, &expected[0], expected + size);
+}
+
+BOOST_AUTO_TEST_CASE(uninitialized_fill_n_struct)
+{
+	struct Shape { int a; int b; };
+	const int size = 2;
+	Shape output[2];
+	Shape value = { 1,2 };
+	Shape* outputEnd = anotherSTL::uninitialize_fill_n(&output[0], size, value);
+	Shape expected[size] = {value, value};
+	BOOST_CHECK(output[0].a == 1);
+	BOOST_CHECK(output[0].b == 2);
+	BOOST_CHECK(output[1].a == 1);
+	BOOST_CHECK(output[1].b == 2);
+
 }
