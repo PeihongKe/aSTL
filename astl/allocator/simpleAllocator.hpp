@@ -1,0 +1,13 @@
+#ifndef _ANOTHERSTL_SIMPLE_ALLOCATOR_
+#define _ANOTHERSTL_SIMPLE_ALLOCATOR_
+
+namespace anotherSTL
+{
+
+}
+
+
+
+
+
+#endif // !_ANOTHERSTL_SIMPLE_ALLOCATOR_
