@@ -2,6 +2,13 @@
 #define BOOST_TEST_MODULE allocator_test
 #include <boost/test/unit_test.hpp>
 #include "astl\allocator\initialize.hpp"
+#include "astl\allocator\simpleAllocator.hpp"
+#include <memory>
+#include <vector>
+#include <deque>
+#include <list>
+#include <stack>
+
 
 using namespace anotherSTL;
 
@@ -107,5 +114,61 @@ BOOST_AUTO_TEST_CASE(uninitialized_fill_n_struct)
 	BOOST_CHECK(output[0].b == 2);
 	BOOST_CHECK(output[1].a == 1);
 	BOOST_CHECK(output[1].b == 2);
-
 }
+
+BOOST_AUTO_TEST_CASE(simpleAllocator_test_empty_vector)
+{
+	//std::vector<int, std::allocator<int>>  v;
+	std::vector<int, anotherSTL::simpleAllocator<int>>  myEmptyVector;
+	BOOST_CHECK(myEmptyVector.size() == 0);	
+}
+
+BOOST_AUTO_TEST_CASE(simpleAllocator_test_vector)
+{
+	//std::vector<int, std::allocator<int>>  v;
+	std::vector<int, anotherSTL::simpleAllocator<int>>  myVector = {1,2,3};
+	std::vector<int>  stdVector = { 1,2,3 };
+	BOOST_CHECK_EQUAL_COLLECTIONS(myVector.begin(), myVector.end(), stdVector.begin(), stdVector.end());
+}
+
+
+BOOST_AUTO_TEST_CASE(simpleAllocator_test_deque)
+{
+	std::deque<int, anotherSTL::simpleAllocator<int>>  myDeq = { 1,2,3 };
+	std::deque<int>  stdDeq = { 1,2,3 };
+	BOOST_CHECK_EQUAL_COLLECTIONS(myDeq.begin(), myDeq.end(), stdDeq.begin(), stdDeq.end());
+}
+
+BOOST_AUTO_TEST_CASE(simpleAllocator_test_list)
+{
+	std::list<int, anotherSTL::simpleAllocator<int>>  myList = { 1,2,3 };
+	std::list<int>  stdList = { 1,2,3 };
+	BOOST_CHECK_EQUAL_COLLECTIONS(myList.begin(), myList.end(), stdList.begin(), stdList.end());
+}
+
+BOOST_AUTO_TEST_CASE(simpleAllocator_test_stack)
+{
+	const int size = 3;
+	
+	std::deque<int, anotherSTL::simpleAllocator<int>> myDeq;
+	myDeq.push_back(100);
+	myDeq.push_back(200);
+	myDeq.push_back(300);
+	std::stack<int, std::deque<int, anotherSTL::simpleAllocator<int>> > myStack(myDeq);
+	// check size;
+	BOOST_CHECK(myStack.size() == 3);
+
+	std::deque<int> stdDeq(size, 100);   
+	stdDeq.push_back(100);
+	stdDeq.push_back(200);
+	stdDeq.push_back(300);
+	std::stack<int, std::deque<int>> stdStack(stdDeq);
+	// check top
+	myStack.pop();
+	stdStack.pop();
+	BOOST_CHECK(myStack.top() == stdStack.top());		
+	BOOST_CHECK(myStack.size() == 2);
+}
+
+
+
