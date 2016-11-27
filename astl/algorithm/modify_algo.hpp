@@ -10,10 +10,94 @@
 namespace anotherSTL
 { 
 
-	inline char* copy(const char* first1, const char* last1, char* first2)
+	inline char* copy_backward(const char* first1, const char* last1, char* last2)
 	{
 		size_t size = last1 - first1;
+		//NOTE: with check overlap and do backward copy if necessary
+		char* first2 = last2 - size;
 		memmove(first2, first1, size);
+		return last2;
+	}
+
+	template<typename BiDirectionalIterator1, typename BiDirectionalIterator2>
+	inline BiDirectionalIterator2 copy_backward(BiDirectionalIterator1 first1, BiDirectionalIterator1 last1, BiDirectionalIterator2 last2)
+	{
+		_copy_backward_functor<BiDirectionalIterator1, BiDirectionalIterator2> copy_backward_f;
+		return copy_backward_f(first1, last1, last2);
+	}
+
+	template<typename BiDirectionalIterator1, typename BiDirectionalIterator2>
+	struct _copy_backward_functor
+	{
+		inline BiDirectionalIterator2 operator()(BiDirectionalIterator1 first1, BiDirectionalIterator1 last1, BiDirectionalIterator2 last2)
+		{
+			return _copy_backward_by_category(first1, last1, last2 , category(first1));
+		}
+	};
+
+	template<typename T>
+	struct _copy_backward_functor<T*, T*>
+	{
+		inline T* operator()(T* first1, T* last1, T* last2)
+		{
+			typedef typename type_traits<T>::has_trivial_assignment_ctr has_trivial_assignment_ctr;
+			return _copy_backward_by_trivial_assign_ctr_4_ptr(first1, last1, last2, has_trivial_assignment_ctr());
+		}
+	};
+
+	template<typename T>
+	struct _copy_backward_functor<const T*, T*>
+	{
+		inline T* operator()(const T* first1, const T* last1, T* last2)
+		{
+			typedef typename type_traits<T>::has_trivial_assignment_ctr has_trivial_assignment_ctr;
+			return _copy_backward_by_trivial_assign_ctr_4_ptr(first1, last1, last2, has_trivial_assignment_ctr());
+		}
+	};
+
+	// NOTE: pointers 
+	template<typename T>
+	inline T* _copy_backward_by_trivial_assign_ctr_4_ptr(const T* first1, const T* last1, T* last2, _true_type)
+	{
+		size_t size = last1 - first1;
+		T* first2 = last2 - size;
+		memmove(first2, first1, sizeof(T)*size);
+		return last2;
+	}
+
+	// NOTE: pointers 
+	template<typename T>
+	inline T* _copy_backward_by_trivial_assign_ctr_4_ptr(const T* first1, const T* last1, T* last2 , _false_type)
+	{
+		// call _copy_backward_by_category
+		return _copy_backward_by_category(first1, last1, last2, category(first1));
+	}
+
+	template<typename BiDirectionalIterator1, typename BiDirectionalIterator2>
+	inline BiDirectionalIterator2 _copy_backward_by_category(BiDirectionalIterator1 first1, BiDirectionalIterator1 last1, BiDirectionalIterator2 last2, bidirectional_iterator_tag)
+	{
+		while (last1 != first1)
+		{
+			*(--last2) = *(--last1);
+		}
+		return last2;
+	}
+
+	template<typename BiDirectionalIterator1, typename BiDirectionalIterator2>
+	inline BiDirectionalIterator2 _copy_backward_by_category(BiDirectionalIterator1 first1, BiDirectionalIterator1 last1, BiDirectionalIterator2 last2, random_access_iterator_tag)
+	{
+		ptrdiff_t n = last1 - first1;
+		for (ptrdiff_t i = 1  ; i < n+1; ++i)
+		{
+			*(--last2) = *(last1 - i);
+		}
+		return last2;
+	}
+
+	inline char* copy(const char* first1, const char* last1, char* first2)
+	{
+		size_t size = last1 - first1;		
+		memcpy(first2, first1, size);
 		return first2 + size;
 	}	 
 
@@ -61,7 +145,7 @@ namespace anotherSTL
 
 	// trivial assignment operator (iterators are points only now)
 	template<typename T>
-	inline T* _copy_by_trivial_assign_ctr_4_ptr(T* first1, T* last1, T* first2, _true_type)
+	inline T* _copy_by_trivial_assign_ctr_4_ptr(const T* first1, const T* last1, T* first2, _true_type)
 	{	
 		size_t size = last1 - first1;
 		memmove(first2, first1, sizeof(T)* size);
@@ -70,7 +154,7 @@ namespace anotherSTL
 
 	// non-trivial assignment operator (iterators are points only now)
 	template<typename T>
-	inline T* _copy_by_trivial_assign_ctr_4_ptr(T* first1, T* last1, T* first2, _false_type)
+	inline T* _copy_by_trivial_assign_ctr_4_ptr(const T* first1, const T* last1, T* first2, _false_type)
 	{
 		return _copy_by_category(first1, last1, first2, random_access_iterator_tag());
 	}
