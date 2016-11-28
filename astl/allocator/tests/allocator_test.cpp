@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(uninitialized_fill_struct)
 	const int size = 2;
 	Shape output[2];
 	Shape value = { 1,2 };	
-	anotherSTL::uninitialize_fill(&output[0], output + size, value);
+	anotherSTL::uninitialized_fill(&output[0], output + size, value);
 	BOOST_CHECK(output[0].a == 1);
 	BOOST_CHECK(output[0].b == 2);
 	BOOST_CHECK(output[1].a == 1);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(uninitialized_fill_n_int)
 	const int size = 3;
 	int value = 1;
 	int output[size];
-	int *outputEnd = uninitialize_fill_n(&output[0], size, value);
+	int *outputEnd = uninitialized_fill_n(&output[0], size, value);
 	int expected[size] = { value, value, value };
 	BOOST_CHECK_EQUAL_COLLECTIONS(&output[0], outputEnd, &expected[0], expected + size);
 }
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(uninitialized_fill_n_struct)
 	const int size = 2;
 	Shape output[2];
 	Shape value = { 1,2 };
-	Shape* outputEnd = anotherSTL::uninitialize_fill_n(&output[0], size, value);
+	Shape* outputEnd = anotherSTL::uninitialized_fill_n(&output[0], size, value);
 	BOOST_CHECK(output[0].a == 1);
 	BOOST_CHECK(output[0].b == 2);
 	BOOST_CHECK(output[1].a == 1);
