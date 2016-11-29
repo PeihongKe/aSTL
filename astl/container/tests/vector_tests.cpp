@@ -8,7 +8,17 @@
 using namespace anotherSTL;
 
 
-BOOST_AUTO_TEST_CASE(vectortest) 
+BOOST_AUTO_TEST_CASE(vector_empty_ctor) 
+{	
+	anotherSTL::vector<int> v;
+	BOOST_CHECK(v.size() == 0);
+	BOOST_CHECK(v.capacity() == 0);	
+}
+
+BOOST_AUTO_TEST_CASE(vector_n_val_ctor)
 {
-	BOOST_CHECK(1 == 1);
+	size_t size = 2;
+	anotherSTL::vector<int> v(size, 100);
+	BOOST_CHECK(v.size() == size);
+	BOOST_CHECK(v.capacity() == size);
 }

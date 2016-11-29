@@ -38,12 +38,12 @@ namespace anotherSTL
 
 		}
 
-		pointer allocate(size_type n, const void* hint = 0)
+		static pointer allocate(size_type n, const void* hint = 0)
 		{
 			return anotherSTL::allocate(static_cast<difference_type>(n), static_cast<pointer>(0));
 		}
 
-		void deallocate(pointer p, size_type n)
+		static void deallocate(pointer p, size_type n)
 		{
 			anotherSTL::deallocate(p);
 		}

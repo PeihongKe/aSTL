@@ -4,7 +4,7 @@
 namespace anotherSTL
 {
 	typedef int ptrdiff_t;
-	typedef unsigned size_t;
+ 
 }
 
 
