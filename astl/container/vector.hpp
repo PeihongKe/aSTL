@@ -87,13 +87,13 @@ namespace anotherSTL
 			}
 			else if (n < capacity())
 			{
-				anotherSTL::uninitialized_fill_n(end_iterator, n - size(), value);
+				anotherSTL::uninitialized_fill_n(end_iterator, n - size(), val);
 				end_iterator = start_iterator + n;
 			}
 			else if (n < max_size())
 			{
 				reallocate_with_new_capacity(n);
-				anotherSTL::uninitialized_fill_n(end_iterator, n - size(), value);
+				anotherSTL::uninitialized_fill_n(end_iterator, n - size(), val);
 				end_iterator = start_iterator + n;
 
 			}
@@ -154,6 +154,7 @@ namespace anotherSTL
 		{
 			return const_cast<reference>(static_cast<const vector<T>&>(this).back());
 		}
+
 		const_reference back() const
 		{
 			//if (size() >= 1)
@@ -161,6 +162,10 @@ namespace anotherSTL
 			return *(end() - 1);
 			//}
 		}
+
+		//TODO: reverse iterator
+		//reverse_iterator rbegin();
+		//const_reverse_iterator rbegin() const;
 
 		// modifier
 		void assign(size_type n, const value_type& val)
@@ -268,14 +273,21 @@ namespace anotherSTL
 
 		void insertToEnd(const value_type& v)
 		{
-			if (size() >= capacity())
+			size_t newSize;
+			if (size() == 0)
 			{
-				size_t newSize = size() * DEFAULT_VECTOR_INCREMENTAL_RATIO;
+				newSize = DEFAULT_VECTOR_SIZE;
 				reallocate_with_new_capacity(newSize);
 			}
-
+			else if (size() >= capacity())
+			{
+				newSize = (size()) * DEFAULT_VECTOR_INCREMENTAL_RATIO;
+				reallocate_with_new_capacity(newSize);
+			}
+			
 			construct(end(), v);
 			++end_iterator;
+					
 		}
 
 		void initialize_n_value(size_type n, const value_type&v)

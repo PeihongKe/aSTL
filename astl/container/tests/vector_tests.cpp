@@ -225,13 +225,13 @@ BOOST_AUTO_TEST_CASE(vector_struct_reall)
 	BOOST_CHECK_EQUAL_COLLECTIONS(v1.begin(), v1.end(), v.begin(), v.end());
 }
 
-
-BOOST_AUTO_TEST_CASE(vector_POD_empty_ctor) 
-{	
-	anotherSTL::vector<int> v;
-	BOOST_CHECK(v.size() == 0);
-	BOOST_CHECK(v.capacity() == 0);	
-}
+//
+//BOOST_AUTO_TEST_CASE(vector_POD_empty_ctor) 
+//{	
+//	anotherSTL::vector<int> v;
+//	BOOST_CHECK(v.size() == 0);
+//	BOOST_CHECK(v.capacity() == 0);	
+//}
 
 BOOST_AUTO_TEST_CASE(vector_POD_n_val_ctor)
 {
@@ -290,11 +290,129 @@ BOOST_AUTO_TEST_CASE(vector_POD_reall)
 	BOOST_CHECK_EQUAL_COLLECTIONS(v1.begin(), v1.end(), v.begin(), v.end());
 }
 
-
-
-
+// TODO: cannot allocate big array like std::vector can do 
 //BOOST_AUTO_TEST_CASE(vector_bigsize)
 //{
 //	int bigSize = std::numeric_limits<int>::max()/sizeof(int);	
 //	anotherSTL::vector<int> v(bigSize, 100);
 //}
+
+
+BOOST_AUTO_TEST_CASE(vector_iterator_begin)
+{
+	anotherSTL::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	BOOST_CHECK(*v.begin() == 1);
+}
+
+BOOST_AUTO_TEST_CASE(vector_iterator_end)
+{
+	anotherSTL::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	anotherSTL::vector<int> v1;
+	for (anotherSTL::vector<int>::iterator it = v.begin(); it != v.end(); ++it)
+	{
+		v1.push_back(*it);
+	}
+	BOOST_CHECK_EQUAL_COLLECTIONS(v.begin(), v.end(), v1.begin(), v1.end());
+}
+
+
+BOOST_AUTO_TEST_CASE(vector_capacity_size)
+{
+	anotherSTL::vector<int> v;
+	BOOST_CHECK(v.size() == 0);
+	v.push_back(1);
+	BOOST_CHECK(v.size() == 1);
+	v.pop_back();
+	BOOST_CHECK(v.size() == 0);
+	v.push_back(1);
+	BOOST_CHECK(v.size() == 1);
+
+	anotherSTL::vector<int> v1(20,0);
+	BOOST_CHECK(v1.size() == 20);
+	v1.pop_back();
+	BOOST_CHECK(v1.size() == 19);
+	while (!v1.empty())
+	{
+		v1.pop_back();
+	}
+	BOOST_CHECK(v1.size() == 0);
+
+	anotherSTL::vector<int> v2(20, 0);
+	BOOST_CHECK(v2.size() == 20);
+	for (int i = 0; i < 80; ++i)
+	{
+		v2.push_back(0);
+	}
+	BOOST_CHECK(v2.size() == 100);
+	while (!v2.empty())
+	{
+		v2.pop_back();
+	}
+	BOOST_CHECK(v2.size() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(vector_capacity_resize1)
+{
+	anotherSTL::vector<int> v;	
+	for (int i = 1; i<10; i++) v.push_back(i);
+
+	v.resize(5);
+	v.resize(8, 100);
+	v.resize(12);
+
+	std::vector<int> expected = { 1 ,2, 3 ,4 ,5 ,100 ,100 ,100, 0, 0, 0, 0 };
+	BOOST_CHECK_EQUAL_COLLECTIONS(v.begin(), v.end(), expected.begin(), expected.end());
+}
+
+BOOST_AUTO_TEST_CASE(vector_capacity_resize2)
+{
+	anotherSTL::vector<int> v;
+	for (int i = 1; i<40; i++) v.push_back(i);
+
+	v.resize(20);
+	v.resize(30, 100);
+	v.resize(35);
+
+	std::vector<int> expected = { 1 ,2, 3 ,4 ,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,100,100,100,100,100,100,100,100,100,100,0,0,0,0,0 };
+	BOOST_CHECK_EQUAL_COLLECTIONS(v.begin(), v.end(), expected.begin(), expected.end());
+}
+
+BOOST_AUTO_TEST_CASE(vector_capacity_capacity)
+{
+	anotherSTL::vector<int> v;
+
+	// set some content in the vector:
+	for (int i = 0; i<20; i++) v.push_back(i);
+	int c = v.capacity();
+	BOOST_CHECK(c = 20);
+	v.push_back(21);
+	c = v.capacity();
+	BOOST_CHECK(c = 40);
+	for (int i = 22; i < 41; ++i)
+	{
+		v.push_back(i);
+	}
+	BOOST_CHECK(c = 80);
+}
+
+
+BOOST_AUTO_TEST_CASE(vector_capacity_reserve)
+{
+	anotherSTL::vector<int> v;	
+	int c = v.capacity();
+	BOOST_CHECK(c == 0);
+	v.reserve(20);
+	c = v.capacity();
+	BOOST_CHECK(c == 20);
+	v.reserve(100);
+	c = v.capacity();
+	BOOST_CHECK(c = 100);
+	v.reserve(20);
+	c = v.capacity();
+	BOOST_CHECK(c = 100);
+}
