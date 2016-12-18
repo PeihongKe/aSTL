@@ -45,14 +45,16 @@ namespace anotherSTL
 		vector(int n, const value_type& val) { initialize_n_value(n, val); }
 		vector(long n, const value_type& val) { initialize_n_value(n, val); }
 
-		vector(const vector& x){ initialize_by_iterator(v.begin(), v.end()); }
+		vector(const vector& x){ initialize_by_iterator_range(x.begin(), x.end()); }
+
+
 
 		// TODO: this can definitely be improved depending on InputIterator type. Do it later after ite is created. 
 		template<typename InputIterator> 
 		vector(InputIterator first, InputIterator second) { initialize_by_iterator_range(first, second); }
 
 		// dtor.
-		~vector() { kill_by_iterator_range(start_iterator, end_iterator); }
+		~vector() { kill(); }
 
 		// assingment operator.
 		vector& operator= (const vector& x)
@@ -101,7 +103,9 @@ namespace anotherSTL
 				throw std::length_error("resize size is larger than max size of a vector");
 			}
 		}
+
 		bool empty() const { return start_iterator == end_iterator; }
+
 		void reserve(size_type n)
 		{
 			if (n > max_size())
@@ -139,8 +143,13 @@ namespace anotherSTL
 				return this->operator[](n);
 			}
 		}
-		reference front();
-		const_reference front() const;
+		reference front() { *start(); }
+
+		const_reference front() const
+		{
+			return *start();
+		}
+
 		reference back()
 		{
 			return const_cast<reference>(static_cast<const vector<T>&>(this).back());
@@ -163,7 +172,7 @@ namespace anotherSTL
 			}
 			else if (n < max_size())
 			{
-				kill_by_iterator_range(begin(), end());
+				kill();
 			}
 			else
 			{
@@ -183,7 +192,7 @@ namespace anotherSTL
 			}
 			else if (n < max_size())
 			{
-				kill_by_iterator_range(begin(), end());
+				kill();
 			}
 			else
 			{
@@ -192,24 +201,27 @@ namespace anotherSTL
 			vector v(first, last);
 			this->swap(v);
 		}
+
 		void push_back(const value_type& val)
 		{
 			insertToEnd(val);
 		}
+
 		void pop_back()
 		{
 			// undefine behaviour: if size is empty, behaviour is undefined
 			destroy(--end_iterator);
 		}
+
 		iterator insert(iterator position, const value_type& val)
 		{
-			if (size() >= capacity())
+			if (size() == capacity())
 			{
 				size_t newSize = size() * DEFAULT_VECTOR_INCREMENTAL_RATIO;
 				iterator startNew = data_allocator::allocate(newSize);
 				iterator endTemp = uninitialized_fill(begin(), position, startNew);
 				construct(endTemp++, val);
-				endTemp = uninitialized_fill(endTemp, end(), startNew);
+				endTemp = uninitialized_fill(position, end(), endTemp);
 
 				start_iterator = startNew;
 				end_iterator = endTemp;
@@ -289,26 +301,23 @@ namespace anotherSTL
 			storage_end_iterator = start + n;
 		}
 
-		template<typename InputIterator>
-		void kill_by_iterator_range(InputIterator first, InputIterator second)
+		void kill()
 		{
-			anotherSTL::destroy(first, second);
-			ptrdiff_t n = distance(start_iterator, end_iterator);
+			anotherSTL::destroy(start_iterator, end_iterator);
+			ptrdiff_t n = distance(start_iterator, storage_end_iterator);
 			data_allocator::deallocate(start_iterator, n);
-			start_iterator = 0;
-			end_iterator = 0;
-			storage_end_iterator = 0;
+			start_iterator = NULL;
+			end_iterator = NULL;
+			storage_end_iterator = NULL;
 		}
 
 
-		template<typename InputIterator>
 		void reallocate_with_new_capacity(size_t n)
 		{
 			iterator start_new = data_allocator::allocate(n);
 			// here assumes that n >= end_iterator - start_iterator
 			iterator end_new = anotherSTL::uninitialized_copy(start_iterator, end_iterator, start_new);
-			kill_by_iterator_range(start_iterator, end_iterator);
-
+			kill();
 			start_iterator = start_new;
 			end_iterator = end_new;
 			storage_end_iterator = start_new + n;
