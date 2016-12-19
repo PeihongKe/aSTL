@@ -33,7 +33,7 @@ namespace anotherSTL
 		typedef value_type*							iterator;
 		typedef value_type*							pointer;
 		typedef size_t								size_type;
-		typedef const value_type					const_reference; // TODO: check if we need this
+		typedef const value_type&					const_reference; // TODO: check if we need this
 		typedef const T*							const_iterator; // TODO: check if we need this
 		typedef const T*							const_pointer;
 		typedef simple_alloc<value_type, Alloc>		data_allocator;
@@ -120,8 +120,8 @@ namespace anotherSTL
 
 		// element access
 		reference operator[] (size_type n)
-		{
-			return const_cast<reference>((static_cast<const vector<T>&>(this)).operator[](n));
+		{			
+			return  const_cast<reference>( (static_cast<const vector&>(*this)).operator[](n));		
 		}
 		const_reference operator[] (size_type n) const
 		{
@@ -129,12 +129,12 @@ namespace anotherSTL
 		}
 		reference at(size_type n)
 		{
-			return const_cast<reference>(static_cast<const vector<T>&>(this).at(n));
+			return const_cast<reference>(static_cast<const vector<T>&>(*this).at(n));
 		}
 
 		const_reference at(size_type n) const
 		{
-			if (n >= size())
+			if (n >= size() || n < 0)
 			{
 				throw std::out_of_range("index out of range ");
 			}
@@ -143,16 +143,16 @@ namespace anotherSTL
 				return this->operator[](n);
 			}
 		}
-		reference front() { *start(); }
+		reference front() { return *begin(); }
 
 		const_reference front() const
 		{
-			return *start();
+			return *begin();
 		}
 
 		reference back()
 		{
-			return const_cast<reference>(static_cast<const vector<T>&>(this).back());
+			return const_cast<reference>(static_cast<const vector<T>&>(*this).back());
 		}
 
 		const_reference back() const

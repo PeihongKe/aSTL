@@ -416,3 +416,79 @@ BOOST_AUTO_TEST_CASE(vector_capacity_reserve)
 	c = v.capacity();
 	BOOST_CHECK(c = 100);
 }
+
+BOOST_AUTO_TEST_CASE(vector_capacity_empty)
+{
+	anotherSTL::vector<int> v;	
+	BOOST_CHECK(v.empty());
+	v.push_back(1);
+	BOOST_CHECK(!v.empty());
+	v.pop_back();
+	BOOST_CHECK(v.empty());
+}
+
+BOOST_AUTO_TEST_CASE(vector_elementAccess_index)
+{
+	anotherSTL::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+
+	const anotherSTL::vector<int> vConst(v);
+	BOOST_CHECK(vConst[0] == 1);
+	BOOST_CHECK(vConst[1] == 2);
+	BOOST_CHECK(vConst[2] == 3);	
+
+	BOOST_CHECK(v[0] == 1);
+	BOOST_CHECK(v[1] == 2);
+	BOOST_CHECK(v[2] == 3);
+
+	// does not check boundary
+	BOOST_CHECK_NO_THROW(vConst[3]);
+	BOOST_CHECK_NO_THROW(v[3]);
+	BOOST_CHECK_NO_THROW(vConst[-1]);
+	BOOST_CHECK_NO_THROW(v[-1]);
+}
+
+BOOST_AUTO_TEST_CASE(vector_elementAccess_at)
+{
+	anotherSTL::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+
+	const anotherSTL::vector<int> vConst(v);
+	BOOST_CHECK(vConst.at(0) == 1);
+	BOOST_CHECK(vConst.at(1) == 2);
+	BOOST_CHECK(vConst.at(2) == 3);
+
+	BOOST_CHECK(v.at(0) == 1);
+	BOOST_CHECK(v.at(1) == 2);
+	BOOST_CHECK(v.at(2) == 3);
+
+	// does not check boundary
+	BOOST_CHECK_THROW(vConst.at(3), std::out_of_range);
+	BOOST_CHECK_THROW(v.at(3), std::out_of_range);
+	BOOST_CHECK_THROW(vConst.at(-1), std::out_of_range);
+	BOOST_CHECK_THROW(v.at(-1), std::out_of_range);
+}
+
+BOOST_AUTO_TEST_CASE(vector_elementAccess_frontback)
+{
+	anotherSTL::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+
+	const anotherSTL::vector<int> vConst(v);
+	BOOST_CHECK(vConst.at(0) == 1);
+	BOOST_CHECK(vConst.at(1) == 2);
+	BOOST_CHECK(vConst.at(2) == 3);
+
+	BOOST_CHECK(v.front() == 1);
+	BOOST_CHECK(v.back() == 3);
+
+	BOOST_CHECK(vConst.front() == 1);
+	BOOST_CHECK(vConst.back() == 3);
+
+}
