@@ -487,8 +487,57 @@ BOOST_AUTO_TEST_CASE(vector_elementAccess_frontback)
 
 	BOOST_CHECK(v.front() == 1);
 	BOOST_CHECK(v.back() == 3);
-
 	BOOST_CHECK(vConst.front() == 1);
 	BOOST_CHECK(vConst.back() == 3);
+
+	v.push_back(4);
+	BOOST_CHECK(v.back() == 4);
+	v.pop_back();
+	BOOST_CHECK(v.back() == 3);
+}
+
+BOOST_AUTO_TEST_CASE(vector_modify_assign)
+{
+	anotherSTL::vector<int> first;
+	anotherSTL::vector<int> second;
+	anotherSTL::vector<int> third;
+	
+	//TODO: has to cast to size_t otherwise would fail
+	first.assign((size_t)7, 100);             // 7 ints with a value of 100
+	anotherSTL::vector<int> expectedFirst(7,100);
+	BOOST_CHECK_EQUAL_COLLECTIONS(first.begin(), first.end(), expectedFirst.begin(), expectedFirst.end());
+
+	anotherSTL::vector<int>::iterator it;
+	it = first.begin() + 1;
+
+	second.assign(it, first.end() - 1); // the 5 central values of first
+	anotherSTL::vector<int> expectedSecond(5, 100);
+	BOOST_CHECK_EQUAL_COLLECTIONS(second.begin(), second.end(), expectedSecond.begin(), expectedSecond.end());
+
+	int myints[] = { 1776,7,4 };
+	third.assign(myints, myints + 3);   // assigning from array.
+	std::vector<int> expectedThird({1776, 7,4});
+	BOOST_CHECK_EQUAL_COLLECTIONS(third.begin(), third.end(), expectedThird.begin(), expectedThird.end());
+
+}
+
+BOOST_AUTO_TEST_CASE(vector_modify_insert)
+{
+	anotherSTL::vector<int> myvector(3, 100);
+	anotherSTL::vector<int>::iterator it;
+
+	it = myvector.begin();
+	it = myvector.insert(it, 200);
+
+	myvector.insert(it, 2, 300);
+
+	//// "it" no longer valid, get a new one:
+	//it = myvector.begin();
+
+	//anotherSTL::vector<int> anothervector(2, 400);
+	//myvector.insert(it + 2, anothervector.begin(), anothervector.end());
+
+	//int myarray[] = { 501,502,503 };
+	//myvector.insert(myvector.begin(), myarray, myarray + 3);
 
 }

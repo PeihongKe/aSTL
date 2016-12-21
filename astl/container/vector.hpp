@@ -240,9 +240,11 @@ namespace anotherSTL
 			}
 		}
 		
-		//void insert(iterator postion, size_type n, const value_type& val);
-		//template<typename InputIterator>
-		//void insert(iterator position, InputIterator first, InputIterator last);
+		void insert(iterator postion, size_type n, const value_type& val);
+		template<typename InputIterator>
+		void insert(iterator position, InputIterator first, InputIterator last);
+
+
 		void swap(vector& x)
 		{
 			iterator start = x.start_iterator;
