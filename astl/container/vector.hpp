@@ -280,8 +280,46 @@ namespace anotherSTL
 				end_iterator = newEnd;
 			}
 		}
-		//template<typename InputIterator>
-		//void insert(iterator position, InputIterator first, InputIterator last);
+
+		template<typename InputIterator>
+		void insert(iterator position, InputIterator first, InputIterator last)
+		{
+			ptrdiff_t n = distance(first, last);
+			size_t requiredSize = size() + n;
+			if (requiredSize > max_size())
+			{
+				throw std::length_error("no enough storage to store n more values ");
+			}
+			else if (requiredSize >= capacity())
+			{
+				size_t newSize = anotherSTL::min(requiredSize * DEFAULT_VECTOR_INCREMENTAL_RATIO, max_size());
+
+				iterator startNew = data_allocator::allocate(newSize);
+				iterator endTemp = uninitialized_copy(begin(), position, startNew);
+				while (first != last)
+				{
+					construct(endTemp++, *first);
+					++first;
+				}
+				iterator endTemp1 = uninitialized_copy(position, end(), endTemp);
+
+				start_iterator = startNew;
+				end_iterator = endTemp1;
+				storage_end_iterator = startNew + newSize;
+			}
+			else
+			{
+				iterator newEnd = end() + n;
+				pointer it = copy_backward(position + 1, end(), newEnd);
+				while (first != last)
+				{
+					construct(position++, *first);
+					++first;
+				}
+				end_iterator = newEnd;
+			}
+
+		}
 
 
 		void swap(vector& x)

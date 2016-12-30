@@ -529,15 +529,18 @@ BOOST_AUTO_TEST_CASE(vector_modify_insert)
 	it = myvector.begin();
 	it = myvector.insert(it, 200);
 
-	myvector.insert(it, 2, 300);
+	myvector.insert(it, size_t(2), 300);
 
 	// "it" no longer valid, get a new one:
 	it = myvector.begin();
 
-	//anotherSTL::vector<int> anothervector(2, 400);
-	//myvector.insert(it + 2, anothervector.begin(), anothervector.end());
+	anotherSTL::vector<int> anothervector(2, 400);
+	myvector.insert(it + 2, anothervector.begin(), anothervector.end());
 
-	//int myarray[] = { 501,502,503 };
-	//myvector.insert(myvector.begin(), myarray, myarray + 3);
+	int myarray[] = { 501,502,503 };	
+	myvector.insert(myvector.begin(), myarray, myarray + 3);
+
+	std::vector<int> expected = { 501 ,502 ,503, 300 ,300, 400, 400, 200, 100, 100, 100 };
+	BOOST_CHECK_EQUAL_COLLECTIONS(myvector.begin(), myvector.end(), expected.begin(), expected.end());
 
 }
