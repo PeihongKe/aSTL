@@ -8,6 +8,8 @@
 #include "astl\allocator\construct.hpp"
 #include "astl\allocator\initialize.hpp"
 #include "astl\algorithm\modify_algo.hpp"
+#include "astl\algorithm\minmax_algo.hpp"
+
 #include <algorithm>
 #include <exception>
 #include <stdexcept>
@@ -16,8 +18,8 @@
 namespace anotherSTL
 {
 
-	#define DEFAULT_VECTOR_SIZE 20;
-	#define DEFAULT_VECTOR_INCREMENTAL_RATIO 2;
+	#define DEFAULT_VECTOR_SIZE 20
+	#define DEFAULT_VECTOR_INCREMENTAL_RATIO 2
 		
 
 
@@ -29,7 +31,7 @@ namespace anotherSTL
 	public:
 		// typedef.
 		typedef T									value_type;
-		typedef value_type&							reference;		
+		typedef value_type&							reference;
 		typedef value_type*							iterator;
 		typedef value_type*							pointer;
 		typedef size_t								size_type;
@@ -37,20 +39,20 @@ namespace anotherSTL
 		typedef const T*							const_iterator; // TODO: check if we need this
 		typedef const T*							const_pointer;
 		typedef simple_alloc<value_type, Alloc>		data_allocator;
-		
+
 	public:
 		// ctor.
 		vector() : start_iterator(0), end_iterator(0), storage_end_iterator(0) { }
-		vector(size_type n, const value_type& val ) { initialize_n_value(n, val); }
+		vector(size_type n, const value_type& val) { initialize_n_value(n, val); }
 		vector(int n, const value_type& val) { initialize_n_value(n, val); }
 		vector(long n, const value_type& val) { initialize_n_value(n, val); }
 
-		vector(const vector& x){ initialize_by_iterator_range(x.begin(), x.end()); }
+		vector(const vector& x) { initialize_by_iterator_range(x.begin(), x.end()); }
 
 
 
 		// TODO: this can definitely be improved depending on InputIterator type. Do it later after ite is created. 
-		template<typename InputIterator> 
+		template<typename InputIterator>
 		vector(InputIterator first, InputIterator second) { initialize_by_iterator_range(first, second); }
 
 		// dtor.
@@ -68,13 +70,13 @@ namespace anotherSTL
 		iterator begin() { return start_iterator; }
 		const_iterator begin() const { return start_iterator; }
 		iterator end() { return end_iterator; }
-		const_iterator end() const { return end_iterator;}
+		const_iterator end() const { return end_iterator; }
 
 		// capacity 
 		size_type size() const { return end() - begin(); }
 		size_type capacity() const { return storage_end_iterator - begin(); }
-		size_type max_size() const 
-		{		
+		size_type max_size() const
+		{
 			// TODO: to make code reuse simpleAllocator::max_size
 			return static_cast<size_type>(std::numeric_limits<unsigned int>::max() / sizeof(value_type));
 		}
@@ -120,8 +122,8 @@ namespace anotherSTL
 
 		// element access
 		reference operator[] (size_type n)
-		{			
-			return  const_cast<reference>( (static_cast<const vector&>(*this)).operator[](n));		
+		{
+			return  const_cast<reference>((static_cast<const vector&>(*this)).operator[](n));
 		}
 		const_reference operator[] (size_type n) const
 		{
@@ -187,15 +189,15 @@ namespace anotherSTL
 			this->swap(v);
 
 		}
-		template<typename InputItereator> 
+		template<typename InputItereator>
 		void assign(InputItereator first, InputItereator last)
 		{
 			ptrdiff_t n = distance(first, last);
-			if (n < capacity())
+			if (n < static_cast<ptrdiff_t>(capacity()))
 			{
 				clear();
 			}
-			else if (n < max_size())
+			else if (n < static_cast<ptrdiff_t>(max_size()))
 			{
 				kill();
 			}
@@ -224,25 +226,62 @@ namespace anotherSTL
 			{
 				size_t newSize = size() * DEFAULT_VECTOR_INCREMENTAL_RATIO;
 				iterator startNew = data_allocator::allocate(newSize);
-				iterator endTemp = uninitialized_fill(begin(), position, startNew);
+				ptrdiff_t n =  position - begin();
+				iterator endTemp = uninitialized_copy(begin(), position, startNew);
 				construct(endTemp++, val);
-				endTemp = uninitialized_fill(position, end(), endTemp);
+				iterator endTemp1 = uninitialized_copy(position, end(), endTemp);
 
 				start_iterator = startNew;
-				end_iterator = endTemp;
+				end_iterator = endTemp1;
 				storage_end_iterator = startNew + newSize;
+				return startNew +n;
 			}
 			else
 			{
 				pointer it = copy_backward(position + 1, end(), end() + 1);
-				//here it == position
-				construct(postion, val);
+				construct(position, val);
+				return position;
 			}
 		}
-		
-		void insert(iterator postion, size_type n, const value_type& val);
-		template<typename InputIterator>
-		void insert(iterator position, InputIterator first, InputIterator last);
+
+		void insert(iterator position, size_type n, const value_type& val)
+		{
+			size_t requiredSize = size() + n;
+			if (requiredSize > max_size())
+			{
+				throw std::length_error("no enough storage to store n more values ");
+			}
+			else if ( requiredSize >= capacity())
+			{				 
+				 size_t newSize = anotherSTL::min(requiredSize * DEFAULT_VECTOR_INCREMENTAL_RATIO, max_size());
+
+				 iterator startNew = data_allocator::allocate(newSize);
+				 iterator endTemp  = uninitialized_copy(begin(), position, startNew);				 
+				 while (n > 0)
+				 {
+					 construct(endTemp++, val);
+					 --n;
+				 }
+				 iterator endTemp1 = uninitialized_copy(position, end(), endTemp);	
+
+				 start_iterator = startNew;
+				 end_iterator = endTemp1;
+				 storage_end_iterator = startNew + newSize;
+			}
+			else
+			{
+				iterator newEnd = end() + n;
+				pointer it = copy_backward(position + 1, end(), newEnd);
+				while (n > 0)
+				{
+					construct(position++, val);
+					--n;
+				}
+				end_iterator = newEnd;
+			}
+		}
+		//template<typename InputIterator>
+		//void insert(iterator position, InputIterator first, InputIterator last);
 
 
 		void swap(vector& x)

@@ -531,8 +531,8 @@ BOOST_AUTO_TEST_CASE(vector_modify_insert)
 
 	myvector.insert(it, 2, 300);
 
-	//// "it" no longer valid, get a new one:
-	//it = myvector.begin();
+	// "it" no longer valid, get a new one:
+	it = myvector.begin();
 
 	//anotherSTL::vector<int> anothervector(2, 400);
 	//myvector.insert(it + 2, anothervector.begin(), anothervector.end());

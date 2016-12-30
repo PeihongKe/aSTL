@@ -1,5 +1,6 @@
 set(algo_SRCS
 modify_algo.cpp
+minmax_algo.cpp
 )
 file(GLOB_RECURSE algo_HEADERS "*hpp")
 add_library(astl_algo ${algo_SRCS} ${algo_HEADERS})
