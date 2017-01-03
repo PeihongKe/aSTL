@@ -192,7 +192,7 @@ namespace anotherSTL
 		template<typename InputItereator>
 		void assign(InputItereator first, InputItereator last)
 		{
-			ptrdiff_t n = distance(first, last);
+			ptrdiff_t n = anotherSTL::distance(first, last);
 			if (n < static_cast<ptrdiff_t>(capacity()))
 			{
 				clear();
@@ -224,17 +224,26 @@ namespace anotherSTL
 		{
 			if (size() == capacity())
 			{
+				iterator oldStart = start_iterator;
+				iterator oldEnd = end_iterator;
+				iterator oldStorageEnd = storage_end_iterator;
+
 				size_t newSize = size() * DEFAULT_VECTOR_INCREMENTAL_RATIO;
 				iterator startNew = data_allocator::allocate(newSize);
-				ptrdiff_t n =  position - begin();
+				ptrdiff_t n = position - begin();
 				iterator endTemp = uninitialized_copy(begin(), position, startNew);
 				construct(endTemp++, val);
 				iterator endTemp1 = uninitialized_copy(position, end(), endTemp);
 
+				// destroy
+				destroy(oldStart, oldEnd);
+				data_allocator::deallocate(oldStart, oldStorageEnd - oldStart);
+
 				start_iterator = startNew;
 				end_iterator = endTemp1;
 				storage_end_iterator = startNew + newSize;
-				return startNew +n;
+
+				return startNew + n;
 			}
 			else
 			{
@@ -251,22 +260,30 @@ namespace anotherSTL
 			{
 				throw std::length_error("no enough storage to store n more values ");
 			}
-			else if ( requiredSize >= capacity())
-			{				 
-				 size_t newSize = anotherSTL::min(requiredSize * DEFAULT_VECTOR_INCREMENTAL_RATIO, max_size());
+			else if (requiredSize >= capacity())
+			{
+				iterator oldStart = start_iterator;
+				iterator oldEnd = end_iterator;
+				iterator oldStorageEnd = storage_end_iterator;
 
-				 iterator startNew = data_allocator::allocate(newSize);
-				 iterator endTemp  = uninitialized_copy(begin(), position, startNew);				 
-				 while (n > 0)
-				 {
-					 construct(endTemp++, val);
-					 --n;
-				 }
-				 iterator endTemp1 = uninitialized_copy(position, end(), endTemp);	
+				size_t newSize = anotherSTL::min(requiredSize * DEFAULT_VECTOR_INCREMENTAL_RATIO, max_size());
 
-				 start_iterator = startNew;
-				 end_iterator = endTemp1;
-				 storage_end_iterator = startNew + newSize;
+				iterator startNew = data_allocator::allocate(newSize);
+				iterator endTemp = uninitialized_copy(begin(), position, startNew);
+				while (n > 0)
+				{
+					construct(endTemp++, val);
+					--n;
+				}
+				iterator endTemp1 = uninitialized_copy(position, end(), endTemp);
+
+				// destroy
+				destroy(oldStart, oldEnd);
+				data_allocator::deallocate(oldStart, oldStorageEnd - oldStart);
+
+				start_iterator = startNew;
+				end_iterator = endTemp1;
+				storage_end_iterator = startNew + newSize;
 			}
 			else
 			{
@@ -284,7 +301,7 @@ namespace anotherSTL
 		template<typename InputIterator>
 		void insert(iterator position, InputIterator first, InputIterator last)
 		{
-			ptrdiff_t n = distance(first, last);
+			ptrdiff_t n = anotherSTL::distance(first, last); // TODO: should this std::distance or anotherSTL::distance?????
 			size_t requiredSize = size() + n;
 			if (requiredSize > max_size())
 			{
@@ -310,7 +327,7 @@ namespace anotherSTL
 			else
 			{
 				iterator newEnd = end() + n;
-				pointer it = copy_backward(position + 1, end(), newEnd);
+				pointer it = copy_backward(position, end(), newEnd);
 				while (first != last)
 				{
 					construct(position++, *first);
@@ -337,8 +354,21 @@ namespace anotherSTL
 			this->storage_end_iterator = end_storage;
 		}
 
-		//iterator erase(iterator position);
-		//iterator erase(iterator first, iterator last);
+		iterator erase(iterator position)
+		{
+			return erase(position, position + 1);
+		}
+
+		iterator erase(iterator first, iterator last)
+		{
+			copy(last , end_iterator, first);
+			ptrdiff_t n = anotherSTL::distance(last  , end_iterator); // TODO: should this std::distance or anotherSTL::distance?????
+			destroy(first + n, end_iterator);
+			end_iterator = first + n;
+			
+			return first;
+		}
+
 		void clear()
 		{
 			anotherSTL::destroy(start_iterator, end_iterator);
