@@ -1,5 +1,6 @@
 set(container_SRCS
 vector.cpp
+list.cpp
 )
 
 file(GLOB_RECURSE container_HEADERS "*.hpp")
