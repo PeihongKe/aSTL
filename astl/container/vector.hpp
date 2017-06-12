@@ -374,7 +374,7 @@ namespace anotherSTL
 			anotherSTL::destroy(start_iterator, end_iterator);
 		}
 
-		allocator_type get_allocator() const;
+		allocator_type get_allocator() const
 		{
 			return alloc;
 		}
