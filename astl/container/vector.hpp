@@ -38,11 +38,11 @@ namespace anotherSTL
 		typedef const value_type&					const_reference; // TODO: check if we need this
 		typedef const T*							const_iterator; // TODO: check if we need this
 		typedef const T*							const_pointer;
-		typedef simple_alloc<value_type, Alloc>		data_allocator;
+		typedef simple_alloc<T, Alloc>				allocator_type;
 
 	public:
 		// ctor.
-		vector() : start_iterator(0), end_iterator(0), storage_end_iterator(0) { }
+		vector() : alloc(allocator_type()), start_iterator(0), end_iterator(0), storage_end_iterator(0) { }
 		vector(size_type n, const value_type& val) { initialize_n_value(n, val); }
 		vector(int n, const value_type& val) { initialize_n_value(n, val); }
 		vector(long n, const value_type& val) { initialize_n_value(n, val); }
@@ -229,7 +229,7 @@ namespace anotherSTL
 				iterator oldStorageEnd = storage_end_iterator;
 
 				size_t newSize = size() * DEFAULT_VECTOR_INCREMENTAL_RATIO;
-				iterator startNew = data_allocator::allocate(newSize);
+				iterator startNew = alloc.allocate(newSize);
 				ptrdiff_t n = position - begin();
 				iterator endTemp = uninitialized_copy(begin(), position, startNew);
 				construct(endTemp++, val);
@@ -237,7 +237,7 @@ namespace anotherSTL
 
 				// destroy
 				destroy(oldStart, oldEnd);
-				data_allocator::deallocate(oldStart, oldStorageEnd - oldStart);
+				alloc.deallocate(oldStart, oldStorageEnd - oldStart);
 
 				start_iterator = startNew;
 				end_iterator = endTemp1;
@@ -268,7 +268,7 @@ namespace anotherSTL
 
 				size_t newSize = anotherSTL::min(requiredSize * DEFAULT_VECTOR_INCREMENTAL_RATIO, max_size());
 
-				iterator startNew = data_allocator::allocate(newSize);
+				iterator startNew = alloc.allocate(newSize);
 				iterator endTemp = uninitialized_copy(begin(), position, startNew);
 				while (n > 0)
 				{
@@ -279,7 +279,7 @@ namespace anotherSTL
 
 				// destroy
 				destroy(oldStart, oldEnd);
-				data_allocator::deallocate(oldStart, oldStorageEnd - oldStart);
+				alloc.deallocate(oldStart, oldStorageEnd - oldStart);
 
 				start_iterator = startNew;
 				end_iterator = endTemp1;
@@ -311,7 +311,7 @@ namespace anotherSTL
 			{
 				size_t newSize = anotherSTL::min(requiredSize * DEFAULT_VECTOR_INCREMENTAL_RATIO, max_size());
 
-				iterator startNew = data_allocator::allocate(newSize);
+				iterator startNew = alloc.allocate(newSize);
 				iterator endTemp = uninitialized_copy(begin(), position, startNew);
 				while (first != last)
 				{
@@ -374,10 +374,16 @@ namespace anotherSTL
 			anotherSTL::destroy(start_iterator, end_iterator);
 		}
 
+		allocator_type get_allocator() const;
+		{
+			return alloc;
+		}
+
 	private:
 		iterator start_iterator;
 		iterator end_iterator;
 		iterator storage_end_iterator;
+		allocator_type alloc;
 
 
 		void insertToEnd(const value_type& v)
@@ -401,8 +407,9 @@ namespace anotherSTL
 
 		void initialize_n_value(size_type n, const value_type&v)
 		{
+			alloc = allocator_type();
 			// NOTE: seperation of memory allocation and construction
-			iterator start = data_allocator::allocate(n);
+			iterator start = alloc.allocate(n);
 			iterator end = anotherSTL::uninitialized_fill_n(start, n, v);
 
 			start_iterator = start;
@@ -414,7 +421,7 @@ namespace anotherSTL
 		void initialize_by_iterator_range(InputIterator first, InputIterator second)
 		{
 			size_type n = distance(first, second);
-			iterator start = data_allocator::allocate(n);
+			iterator start = alloc.allocate(n);
 			iterator end = anotherSTL::uninitialized_copy(first, second, start);
 
 			start_iterator = start;
@@ -426,7 +433,7 @@ namespace anotherSTL
 		{
 			anotherSTL::destroy(start_iterator, end_iterator);
 			ptrdiff_t n = distance(start_iterator, storage_end_iterator);
-			data_allocator::deallocate(start_iterator, n);
+			alloc.deallocate(start_iterator, n);
 			start_iterator = NULL;
 			end_iterator = NULL;
 			storage_end_iterator = NULL;
@@ -435,7 +442,7 @@ namespace anotherSTL
 
 		void reallocate_with_new_capacity(size_t n)
 		{
-			iterator start_new = data_allocator::allocate(n);
+			iterator start_new = alloc.allocate(n);
 			// here assumes that n >= end_iterator - start_iterator
 			iterator end_new = anotherSTL::uninitialized_copy(start_iterator, end_iterator, start_new);
 			kill();
@@ -446,6 +453,49 @@ namespace anotherSTL
 
 		
 	};
+
+	template<typename T, typename Alloc>
+	bool operator == (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+	{
+
+	}
+
+	template<typename T, typename Alloc>
+	bool operator != (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+	{
+		return !(rhs == lhs);
+	}
+
+	template<typename T, typename Alloc>
+	bool operator< (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+	{
+		// todo
+	}
+
+	template<typename T, typename Alloc>
+	bool operator>= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+	{
+		return !(lhs < rhs);
+	}
+
+	template<typename T, typename Alloc>
+	bool operator> (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+	{
+		return !(lhs < rhs) && !(lhs == rhs);
+	}
+
+	template<typename T, typename Alloc>
+	bool operator<= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+	{
+		return !(lhs > rhs);
+	}
+
+	template<typename T, typename Alloc>
+	void swap(vector<T, Alloc>& lhs, vector<T, Alloc>& rhs)
+	{
+		//todo:
+	}
+
 }
 
 #endif

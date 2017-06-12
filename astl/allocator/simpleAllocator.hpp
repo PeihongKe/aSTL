@@ -6,7 +6,7 @@
 
 namespace anotherSTL
 {
-	// standard interface for an allocator
+	// standard interface for an allocator, wrapper of the global alloc function
 	template<typename T>
 	class simpleAllocator
 	{
@@ -75,21 +75,23 @@ namespace anotherSTL
 
 	};
 
+
+	// simple wrapper of simpleAllocator
 	template<typename T, class Alloc>
 	class simple_alloc
 	{
 	public:
-		static T* allocate(size_t n)
+		T* allocate(size_t n)
 		{
 			return 0 == n ? 0 : Alloc::allocate(n * sizeof(T));
 		}
 
-		static T* allocate(void)
+		T* allocate(void)
 		{
 			return Alloc::allocate(sizeof(T));
 		}
 
-		static void deallocate(T *p, size_t n)
+		void deallocate(T *p, size_t n)
 		{
 			if (0 != n)
 			{
@@ -97,7 +99,7 @@ namespace anotherSTL
 			}
 		}
 
-		static void deallocate(T *p)
+		void deallocate(T *p)
 		{
 			Alloc::deallocate(p, sizeof(T));
 		}

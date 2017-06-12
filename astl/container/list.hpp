@@ -3,6 +3,7 @@
 #include "astl\iterator\iterator_traits.hpp"
 #include "astl\allocator\simpleAllocator.hpp"
 #include "astl\iterator\iterator.hpp"
+#include "astl\allocator\simpleAllocator.hpp"
 
 namespace anotherSTL
 {
@@ -70,10 +71,14 @@ namespace anotherSTL
 	template<typename T, typename Alloc = simpleAllocator<T> >
 	class list
 	{
+	private:
+		__list_node<T>* end;
+		__list_node<T>* begin;		
+		allocator_type alloc;
 
 	public:
 		typedef T											value_type;
-		typedef Alloc										allocator_type;
+		typedef simpleAllocator<T, Alloc>					allocator_type;
 
 		// as the first attemp just define the default member types for default Alloc
 		typedef T&											reference;          // this should be allocator_type::reference
@@ -88,13 +93,15 @@ namespace anotherSTL
 		typedef iterator_traits<iterator>::difference_type	difference_type;
 
 		// ctr.
-		explicit list(const allocator_type& alloc = allocator_type())
+		explicit list(const allocator_type& alloc = allocator_type()): alloc(alloc)
 		{
-
+			//end = alloc.
+			//start = end;
 		}
 
 		explicit list(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		{
+			end = new __list_node<T>();
 
 		}
 
@@ -371,7 +378,11 @@ namespace anotherSTL
 			return (lhs < rhs) && lhs == rhs;
 		}
 
+		template<typename T, typename Alloc>
+		void swap(list<T, Alloc>& lhs, list<T, Alloc>& rhs)
+		{
 
+		}
 	
 
 
