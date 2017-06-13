@@ -1,5 +1,5 @@
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE iterator_trait
+#define BOOST_TEST_MODULE test_container_vector
 #include <boost/test/unit_test.hpp>
 #include "astl\container\vector.hpp"
 

@@ -19,6 +19,7 @@ namespace anotherSTL
 	template<typename T, class Ref, class Ptr>
 	class __list_iterator
 	{
+	public:
 		typedef __list_iterator<T, T&, T*>			iterator;
 		typedef __list_iterator<T, Ref, Ptr>		self;
 		typedef bidirectional_iterator_tag			iterator_category;
@@ -36,7 +37,7 @@ namespace anotherSTL
 		__list_iterator(const self& inp) : node( inp.node){}
 
 		bool operator==(const self& rhs) const { return node == rhs.node; }
-		bool operator!=(const self& rhs) const { return !(this->operator==(rhs); }
+		bool operator!=(const self& rhs) const { return !(this->operator==(rhs)); }
 
 		reference operator*() const { return (*node).data; }
 		pointer operator->() const { return &(operator*()); }
@@ -71,38 +72,43 @@ namespace anotherSTL
 	template<typename T, typename Alloc = simpleAllocator<T> >
 	class list
 	{
-	private:
-		__list_node<T>* end;
-		__list_node<T>* begin;		
-		allocator_type alloc;
+
 
 	public:
 		typedef T											value_type;
-		typedef simpleAllocator<T, Alloc>					allocator_type;
+		typedef simple_alloc<T, Alloc>						allocator_type;
 
 		// as the first attemp just define the default member types for default Alloc
 		typedef T&											reference;          // this should be allocator_type::reference
 		typedef const T&									const_reference;    // this should be allocator_type::const_reference
 		typedef T*											pointer;            // this should be allocator_type::pointer
 		typedef const T*									const_pointer;      // this should be allocator_type::const_pointer
-		typedef __list_iterator<T, T&, T*		>			iterator;
+		typedef __list_iterator<T, T&, T*>					iterator;
 		typedef const __list_iterator<T, T&, T*>			const_iterator;
 		// todo : typedef reverse_iterator
 		// todo : typedef const_reverse_iterator
 		typedef size_t										size_type;
-		typedef iterator_traits<iterator>::difference_type	difference_type;
+		typedef typename iterator_traits<iterator>::difference_type	difference_type;
 
+
+	private:
+		iterator endNode;
+		size_t numOfNodes;
+		allocator_type alloc;
+
+	public:
 		// ctr.
 		explicit list(const allocator_type& alloc = allocator_type()): alloc(alloc)
-		{
-			//end = alloc.
-			//start = end;
+		{		
+			endNode = iterator(new __list_node<T>());
+			endNode.node->next = endNode;
+			endNode.node->prev = endNode;
+			numOfNodes = 0;
 		}
 
-		explicit list(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
+		explicit list(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): alloc(alloc)
 		{
-			end = new __list_node<T>();
-
+			endNode = iterator(new __list_node<T>());
 		}
 
 		template<class InputIterator>
@@ -196,7 +202,7 @@ namespace anotherSTL
 		}
 
 		// modifier
-		template<InputIterator>
+		template<typename InputIterator>
 		void assign(InputIterator first, InputIterator last)
 		{
 
@@ -250,7 +256,7 @@ namespace anotherSTL
 
 		}
 
-		iteartor erase(const_iterator first, const_iterator last)
+		iterator erase(const_iterator first, const_iterator last)
 		{
 
 		}
@@ -292,7 +298,7 @@ namespace anotherSTL
 		}
 
 		template<typename Predicate>
-		void remove_if(Predict pred)
+		void remove_if(Predicate pred)
 		{
 
 		}
@@ -341,72 +347,51 @@ namespace anotherSTL
 
 		}
 
-		// non-member functions
-		template<typename T, typename Alloc>
-		bool operator==(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
-		{
-
-		}
-
-		template<typename T, typename Alloc>
-		bool operator!=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
-		{
-			return !(lhs == rhs);
-		}
-
-		template<typename T, typename Alloc>
-		bool operator<(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
-		{
-
-		}
-
-		template<typename T, typename Alloc>
-		bool operator>=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
-		{
-			return !(lhs < rhs);
-		}
-
-		template<typename T, typename Alloc>
-		bool operator>(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
-		{
-			return !(lhs <= rhs);
-		}
-
-		template<typename T, typename Alloc>
-		bool operator<=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
-		{
-			return (lhs < rhs) && lhs == rhs;
-		}
-
-		template<typename T, typename Alloc>
-		void swap(list<T, Alloc>& lhs, list<T, Alloc>& rhs)
-		{
-
-		}
-	
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	};
+
+
+	// non-member functions
+	template<typename T, typename Alloc>
+	bool operator==(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+	{
+
+	}
+
+	template<typename T, typename Alloc>
+	bool operator!=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
+	template<typename T, typename Alloc>
+	bool operator<(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+	{
+
+	}
+
+	template<typename T, typename Alloc>
+	bool operator>=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+	{
+		return !(lhs < rhs);
+	}
+
+	template<typename T, typename Alloc>
+	bool operator>(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+	{
+		return !(lhs <= rhs);
+	}
+
+	template<typename T, typename Alloc>
+	bool operator<=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+	{
+		return (lhs < rhs) && lhs == rhs;
+	}
+
+	template<typename T, typename Alloc>
+	void swap(list<T, Alloc>& lhs, list<T, Alloc>& rhs)
+	{
+
+	}
 
 }
 
