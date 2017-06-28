@@ -4,6 +4,7 @@
 #include "astl\allocator\simpleAllocator.hpp"
 #include "astl\iterator\iterator.hpp"
 #include "astl\allocator\simpleAllocator.hpp"
+#include "astl\allocator\construct.hpp"
 
 namespace anotherSTL
 {
@@ -92,23 +93,41 @@ namespace anotherSTL
 
 
 	private:
-		iterator endNode;
+		typedef __list_node<T>*								link_type;
+		typedef __list_node<T>								list_node;
+		typedef simple_alloc<list_node, simpleAllocator<list_node>>				list_node_allocator_type;
+
+		//iterator endNode;
+		list_node* node;
 		size_t numOfNodes;
 		allocator_type alloc;
+		list_node_allocator_type node_alloc;
 
 	public:
 		// ctr.
-		explicit list(const allocator_type& alloc = allocator_type()): alloc(alloc)
+		explicit list(const allocator_type& alloc = allocator_type()): alloc(alloc), node_alloc(list_node_allocator_type())
 		{		
-			endNode = iterator(new __list_node<T>());
-			endNode.node->next = endNode;
-			endNode.node->prev = endNode;
+			node = node_alloc.allocate();
+			node->next = node;
+			node->prev = node;
 			numOfNodes = 0;
 		}
 
-		explicit list(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): alloc(alloc)
+		explicit list(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): alloc(alloc), node_alloc(list_node_allocator_type())
 		{
-			endNode = iterator(new __list_node<T>());
+			node = node_alloc.allocate();
+			link_type curr = node;
+			for (size_t i = 0; i < n; ++i)
+			{
+				link_type newNode = node_alloc.allocate();	
+				++numOfNodes;
+				construct(&newNode->data, val);				 
+				curr->next = newNode;
+				newNode->prev = curr;
+				curr = newNode;
+			}
+			curr->next = endNode;
+			node->prev = curr;
 		}
 
 		template<class InputIterator>
@@ -124,13 +143,20 @@ namespace anotherSTL
 
 		~list()
 		{
+			list_node* curr = node;
+			for (size_t i = 0; i < numOfNodes + 1; ++i )
+			{
+				list_node* next = curr->next;
+				node_alloc.deallocate(curr);
+				curr = next;
+			}
 
 		}
 
 		// iterator
 		iterator begin()
 		{
-
+			return iterator(node->next);
 		}
 
 		const_iterator begin() const
@@ -140,7 +166,7 @@ namespace anotherSTL
 
 		iterator end()
 		{
-
+			return iterator(node);
 		}
 
 		const_iterator end() const
@@ -167,7 +193,7 @@ namespace anotherSTL
 		// capacity.
 		bool empty() const
 		{
-
+			return numOfNodes == 0;
 		}
 
 		size_type size() const

@@ -15,39 +15,39 @@ using namespace anotherSTL;
 
 BOOST_AUTO_TEST_CASE(list_ctor)
 {    
-	std::list<int> first;
+	anotherSTL::list<int> first;
 	BOOST_CHECK(first.empty() == true);
 	
-	std::list<int> second(4, 100);
-	for (auto i = second.begin(); i != second.end(); ++i)
-	{
-		BOOST_CHECK(*i == 100);
-	}
-	
-	std::list<int> third(second.begin(), second.end());
-	for (auto i = third.begin(); i != third.end(); ++i)
-	{
-		BOOST_CHECK(*i == 100);
-	}
+	//anotherSTL::list<int> second(4, 100);
+	//for (auto i = second.begin(); i != second.end(); ++i)
+	//{
+	//	BOOST_CHECK(*i == 100);
+	//}
+	//
+	//std::list<int> third(second.begin(), second.end());
+	//for (auto i = third.begin(); i != third.end(); ++i)
+	//{
+	//	BOOST_CHECK(*i == 100);
+	//}
 
-	std::list<int> fourth(third);
-	for (auto i = fourth.begin(); i != fourth.end(); ++i)
-	{
-		BOOST_CHECK(*i == 100);
-	}
+	//std::list<int> fourth(third);
+	//for (auto i = fourth.begin(); i != fourth.end(); ++i)
+	//{
+	//	BOOST_CHECK(*i == 100);
+	//}
 
-	int inputs[] = {16, 2, 77, 29};
-	std::list<int> fifth(inputs, inputs + sizeof(inputs) / sizeof(int));
-	auto i = fifth.begin();
-	BOOST_CHECK(*i == 16);
-	++i;
-	BOOST_CHECK(*i == 2);
-	++i;
-	BOOST_CHECK(*i == 77);
-	++i;
-	BOOST_CHECK(*i == 29);
-	++i;
-	BOOST_CHECK(i == fifth.end());
+	//int inputs[] = {16, 2, 77, 29};
+	//std::list<int> fifth(inputs, inputs + sizeof(inputs) / sizeof(int));
+	//auto i = fifth.begin();
+	//BOOST_CHECK(*i == 16);
+	//++i;
+	//BOOST_CHECK(*i == 2);
+	//++i;
+	//BOOST_CHECK(*i == 77);
+	//++i;
+	//BOOST_CHECK(*i == 29);
+	//++i;
+	//BOOST_CHECK(i == fifth.end());
 }
 
 BOOST_AUTO_TEST_CASE(list_cpy_assign)
