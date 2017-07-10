@@ -93,8 +93,9 @@ namespace anotherSTL
 
 
 	private:
-		typedef __list_node<T>*								link_type;
 		typedef __list_node<T>								list_node;
+		typedef list_node*								link_type;
+		
 		typedef simple_alloc<list_node, simpleAllocator<list_node>>				list_node_allocator_type;
 
 		//iterator endNode;
@@ -105,15 +106,17 @@ namespace anotherSTL
 
 	public:
 		// ctr.
-		explicit list(const allocator_type& alloc = allocator_type()): alloc(alloc), node_alloc(list_node_allocator_type())
+		explicit list(const allocator_type& alloc = allocator_type()): 
+			alloc(alloc), node_alloc(list_node_allocator_type()), numOfNodes(0)
 		{		
 			node = node_alloc.allocate();
 			node->next = node;
 			node->prev = node;
-			numOfNodes = 0;
+			
 		}
 
-		explicit list(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): alloc(alloc), node_alloc(list_node_allocator_type())
+		explicit list(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()):
+			alloc(alloc), node_alloc(list_node_allocator_type()), numOfNodes(0)
 		{
 			node = node_alloc.allocate();
 			link_type curr = node;
@@ -126,11 +129,13 @@ namespace anotherSTL
 				newNode->prev = curr;
 				curr = newNode;
 			}
-			curr->next = endNode;
+			curr->next = node;
 			node->prev = curr;
 		}
 
-		template<class InputIterator>
+
+		// make sure this is understood
+		template<class InputIterator, typename = typename enable_if<isTrueType(is_iterator<InputIterator>), void>::type >
 		list(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
 		{
 
@@ -156,7 +161,8 @@ namespace anotherSTL
 		// iterator
 		iterator begin()
 		{
-			return iterator(node->next);
+			iterator it(node->next);
+			return it;
 		}
 
 		const_iterator begin() const
@@ -166,7 +172,8 @@ namespace anotherSTL
 
 		iterator end()
 		{
-			return iterator(node);
+			iterator it(node);
+			return it;
 		}
 
 		const_iterator end() const

@@ -1,11 +1,11 @@
 #ifndef _ANOTHERSTL_TYPE_TRAITS_
 #define _ANOTHERSTL_TYPE_TRAITS_
 
- 
+#include "astl/base/fundamental.hpp"
+
 namespace anotherSTL
 {
-	struct _true_type{};
-	struct _false_type{};
+
 
 	template<typename T>
 	struct type_traits 
@@ -143,7 +143,7 @@ namespace anotherSTL
 	template<>
 	struct type_traits<long double>
 	{
-		typedef _true_type is_POD_type;
+		typedef _true_type is_POD_type; 
 		typedef _true_type has_trivial_default_ctr;
 		typedef _true_type has_trivial_copy_ctr;
 		typedef _true_type has_trivial_assignment_ctr;

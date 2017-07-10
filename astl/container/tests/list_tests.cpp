@@ -18,19 +18,19 @@ BOOST_AUTO_TEST_CASE(list_ctor)
 	anotherSTL::list<int> first;
 	BOOST_CHECK(first.empty() == true);
 	
-	//anotherSTL::list<int> second(4, 100);
-	//for (auto i = second.begin(); i != second.end(); ++i)
-	//{
-	//	BOOST_CHECK(*i == 100);
-	//}
-	//
-	//std::list<int> third(second.begin(), second.end());
+	anotherSTL::list<int> second(4, 100);
+	for (auto i = second.begin(); i != second.end(); ++i)
+	{
+		BOOST_CHECK(*i == 100);
+	}
+	
+	//anotherSTL::list<int> third((second.begin()), second.end());
 	//for (auto i = third.begin(); i != third.end(); ++i)
 	//{
 	//	BOOST_CHECK(*i == 100);
 	//}
 
-	//std::list<int> fourth(third);
+	//anotherSTL::list<int> fourth(second);
 	//for (auto i = fourth.begin(); i != fourth.end(); ++i)
 	//{
 	//	BOOST_CHECK(*i == 100);

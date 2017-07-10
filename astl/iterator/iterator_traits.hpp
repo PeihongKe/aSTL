@@ -13,6 +13,49 @@ namespace anotherSTL
 	struct bidirectional_iterator_tag: public forward_interator_tag	{};
 	struct random_access_iterator_tag: public bidirectional_iterator_tag{};
 
+	// ==lightweight type categorization idiom===
+	//template<class T, class R = void>
+	//struct enable_if_type { typedef R type; };
+
+	//template<class T, class Enable = void>
+	//struct test : std::false_type {};
+
+	//template<class T>
+	//struct test<T, typename enable_if_type<typename T::is_proxy_tag>::type> : std::true_type
+	//{};
+
+	//template <typename _Big, typename _Other>
+	//class CProxy
+	//{
+	//public:
+	//	typedef void is_proxy_tag;
+	//};
+
+	template<bool _Test,
+		class _Ty = void>
+		struct enable_if
+	{	
+	};
+
+	template<class _Ty>
+	struct enable_if<true, _Ty>
+	{	// type is _Ty for _Test
+		typedef _Ty type;
+	};
+
+
+
+	template<class T, class R = void>
+	struct enable_if_type { typedef R type; };
+
+	template<typename T, typename Enable = void>
+	struct is_iterator: _false_type	{};
+
+	template<class T>
+	struct is_iterator<T, typename enable_if_type<typename T::iterator_category>::type> : _true_type {};
+
+
+
 	template<typename Iterator>
 	class iterator_traits
 	{
